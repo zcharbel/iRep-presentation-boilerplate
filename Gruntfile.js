@@ -1,36 +1,36 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		// "general" removes the production folder when you go to do a new release
-		// "node_mods" removes the node_modules folder after a new release is created
+		// minifies global and local css files
 		cssmin: {
 			dynamic: {
 				files: [
 		        {
-					expand: true,     // Enable dynamic expansion.
-					cwd: 'src/',      // Src matches are relative to this path.
-					src: ['**/*.css'], // Actual pattern(s) to match.
-					dest: 'production/',   // Destination path prefix.
-					ext: '.min.css',   // Dest filepaths will have this extension.
+					expand: true,
+					cwd: 'src/',
+					src: ['**/*.css'],
+					dest: 'production/',
+					ext: '.min.css'
 		        },
 		      ]
 			}
 		},
-		// minifies the main.js file located in /assets/js
+		// minifies all global and local js files
 		uglify: {
 			dynamic: {
 				files: [
 		        {
-					expand: true,     // Enable dynamic expansion.
-					cwd: 'src/',      // Src matches are relative to this path.
-					src: ['**/*.js'], // Actual pattern(s) to match.
-					dest: 'production/',   // Destination path prefix.
-					ext: '.min.js',   // Dest filepaths will have this extension.
+					expand: true,
+					cwd: 'src/',
+					src: ['**/*.js'],
+					dest: 'production/',
+					ext: '.min.js'
 		        },
 		      ]
 			}
 		},
-		// this optimizes your images for when you are ready to release your website
+		// this optimizes your images for when you are 
+		// ready to upload your .zips to salesforce
 	    imagemin: {                          
 			dynamic: {
 				options: {
@@ -45,17 +45,22 @@ module.exports = function(grunt) {
 			}
 		},
 		clean: {
+			// cleans production folder before running actions
 			general: ['production/'],
+			// the delects the _global folder from the production folder 
+			// once the _global folder is copied into local slides
 			global: ['production/_global/']
 		},
-		// Copy creates a copy within the production folder after all commands are run
 		copy: {
+			// copys all slides from the src folder to the production folder
 			slides: {
 				expand: true,
 				cwd: 'src/',
 				src: ['**/*.html'],
 				dest: 'production/'
 			},
+			// once images, css and js are minified/optimized
+			// the _global folder is then copied into all slide folders
 			globalFiles: {
 				expand: true,
 				cwd: 'production/_global/',
@@ -63,6 +68,58 @@ module.exports = function(grunt) {
 				dest: 'production/'
 			}
 		},
+		// this takes copy:globalFiles and performs this action on all slides
+		// dest paths need to be created and updated manually to ensure the _global folder makes it into each slide
+		multidest: {
+			globals: {
+				tasks: [
+					"copy:globalFiles"
+				],
+				dest: [ "./production/slide_01/_global/"]
+			}
+		},
+		replace: {
+			// this converts global paths to local paths
+			// when the _globals folder is moved inside the slides
+			updateGlobalPaths: {
+				src: ['production/**/*.html'],
+				overwrite: true,
+				replacements: [{
+					from: /..\/_global/g,
+					to: '_global'
+				}]
+			},
+			// updates .css extension to relfect the CSS minification
+			updateCssExt: {
+				src: ['production/**/*.html'],
+				overwrite: true,
+				replacements: [{
+					from: /.css"/g,
+					to: '.min.css"'
+				}]
+			},
+			// updates .js extension to relfect the JS minification
+			updateJsExt: {
+				src: ['production/**/*.html'],
+				overwrite: true,
+				replacements: [{
+					from: /.js"/g,
+					to: '.min.js"'
+				}]
+			}
+		},
+		// this minifies the html once paths and file extensions are updated 
+		minifyHtml: {
+	        dist: {
+	            files: [{
+					expand: true,   
+					cwd: 'production/',
+					src: ['**/*.html'],
+					dest: 'production/'	
+				}]
+	        }
+	    },
+		// once the slides are ready this creates individual .zips to upload to salesforce
 		zip_directories: {
 			irep: {
 				files: [{
@@ -73,54 +130,7 @@ module.exports = function(grunt) {
 					dest: './production'
 				}]
 			}
-		},
-		multidest: {
-			globals: {
-				tasks: [
-					"copy:globalFiles"
-				],
-				dest: [ "./production/slide_01/_global/"]
-			}
-		},
-		replace: {
-			updateGlobalPaths: {
-				src: ['production/**/*.html'],
-				overwrite: true,                 // overwrite matched source files
-				replacements: [{
-					from: /..\/_global/g,
-					to: '_global'
-				}]
-			},
-			updateCssExt: {
-				src: ['production/**/*.html'],
-				overwrite: true,                 // overwrite matched source files
-				replacements: [{
-					from: /.css"/g,
-					to: '.min.css"'
-				}]
-			},
-			updateJsExt: {
-				src: ['production/**/*.html'],
-				overwrite: true,                 // overwrite matched source files
-				replacements: [{
-					from: /.js"/g,
-					to: '.min.js"'
-				}]
-			}
-		},
-		minifyHtml: {
-	        options: {
-	            cdata: true
-	        },
-	        dist: {
-	            files: [{
-					expand: true,     // Enable dynamic expansion.
-					cwd: 'production/',      // Src matches are relative to this path.
-					src: ['**/*.html'], // Actual pattern(s) to match.
-					dest: 'production/',   // Destination path prefix.	
-				}]
-	        }
-	    }
+		}
 	});
 	
 	// loadNpmTasks bring in required grunt modules for use within this file
