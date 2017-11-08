@@ -107,7 +107,20 @@ module.exports = function(grunt) {
 					to: '.min.js"'
 				}]
 			}
-		}
+		},
+		minifyHtml: {
+	        options: {
+	            cdata: true
+	        },
+	        dist: {
+	            files: [{
+					expand: true,     // Enable dynamic expansion.
+					cwd: 'production/',      // Src matches are relative to this path.
+					src: ['**/*.html'], // Actual pattern(s) to match.
+					dest: 'production/',   // Destination path prefix.	
+				}]
+	        }
+	    }
 	});
 	
 	// loadNpmTasks bring in required grunt modules for use within this file
@@ -122,8 +135,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-multi-dest');
 	grunt.loadNpmTasks('grunt-text-replace'); 
 	grunt.loadNpmTasks('grunt-zip-directories');
+	grunt.loadNpmTasks('grunt-minify-html');
 	
 	// "default" is the only action you use here
-	grunt.registerTask('default', ['clean:general', 'copy:slides', 'imagemin', 'cssmin', 'uglify', 'multidest', 'replace', 'clean:global', 'zip_directories:irep']);
+	grunt.registerTask('default', ['clean:general', 'copy:slides', 'imagemin', 'cssmin', 'uglify', 'multidest', 'replace', 'clean:global', 'minifyHtml', 'zip_directories:irep']);
 	
 }
