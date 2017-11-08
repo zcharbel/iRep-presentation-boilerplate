@@ -3,6 +3,47 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		// "general" removes the production folder when you go to do a new release
 		// "node_mods" removes the node_modules folder after a new release is created
+		cssmin: {
+			dynamic: {
+				files: [
+		        {
+					expand: true,     // Enable dynamic expansion.
+					cwd: 'src/',      // Src matches are relative to this path.
+					src: ['**/*.css'], // Actual pattern(s) to match.
+					dest: 'production/',   // Destination path prefix.
+					ext: '.min.css',   // Dest filepaths will have this extension.
+		        },
+		      ]
+			}
+		},
+		// minifies the main.js file located in /assets/js
+		uglify: {
+			dynamic: {
+				files: [
+		        {
+					expand: true,     // Enable dynamic expansion.
+					cwd: 'src/',      // Src matches are relative to this path.
+					src: ['**/*.js'], // Actual pattern(s) to match.
+					dest: 'production/',   // Destination path prefix.
+					ext: '.min.js',   // Dest filepaths will have this extension.
+		        },
+		      ]
+			}
+		},
+		// this optimizes your images for when you are ready to release your website
+	    imagemin: {                          
+			dynamic: {
+				options: {
+					optimizationLevel: 7
+				},                    
+				files: [{
+					expand: true,                  
+					cwd: 'src/',                   
+					src: ['**/*.{png,jpg,gif,svg}'],
+					dest: 'production/'
+				}]
+			}
+		},
 		clean: {
 			general: ['production/'],
 			global: ['production/_global/']
@@ -12,24 +53,12 @@ module.exports = function(grunt) {
 			slides: {
 				expand: true,
 				cwd: 'src/',
-				src: ['**/*'],
+				src: ['**/*.html'],
 				dest: 'production/'
 			},
 			globalFiles: {
 				expand: true,
-				cwd: 'src/_global',
-				src: ['**'],
-				dest: 'production/'
-			},
-			images: {
-				expand: true,
-				cwd: 'src/_global/images/',
-				src: ['**/*.{png,jpg,gif,svg}'],
-				dest: 'production/'
-			},
-			js: {
-				expand: true,
-				cwd: 'src/_global/js/',
+				cwd: 'production/_global/',
 				src: ['**'],
 				dest: 'production/'
 			}
@@ -61,6 +90,22 @@ module.exports = function(grunt) {
 					from: /..\/_global/g,
 					to: '_global'
 				}]
+			},
+			updateCssExt: {
+				src: ['production/**/*.html'],
+				overwrite: true,                 // overwrite matched source files
+				replacements: [{
+					from: /.css"/g,
+					to: '.min.css"'
+				}]
+			},
+			updateJsExt: {
+				src: ['production/**/*.html'],
+				overwrite: true,                 // overwrite matched source files
+				replacements: [{
+					from: /.js"/g,
+					to: '.min.js"'
+				}]
 			}
 		}
 	});
@@ -75,14 +120,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-multi-dest');
-	grunt.loadNpmTasks('grunt-text-replace');
+	grunt.loadNpmTasks('grunt-text-replace'); 
 	grunt.loadNpmTasks('grunt-zip-directories');
 	
-	// "default" is for use when developing the theme
-	// "release" is for when you want your final files for deployment
-	// "releasecopy" is only used within "release" and you won't use this on its own
-	grunt.registerTask('default', ['clean:general', 'copy:slides', 'multidest:globals', 'clean:global', 'replace:updateGlobalPaths', 'zip_directories:irep']);
-	//grunt.registerTask('release', ['clean:general', 'sass', 'cssmin', 'imagemin', 'uglify', 'releasecopy', 'clean:node_mods']);
-	//grunt.registerTask('releasecopy', ['copy:videos', 'copy:pdfs', 'copy:vendorjs', 'copy:fonts', 'copy:favicons', 'copy:copyphp']);
+	// "default" is the only action you use here
+	grunt.registerTask('default', ['clean:general', 'copy:slides', 'imagemin', 'cssmin', 'uglify', 'multidest', 'replace', 'clean:global', 'zip_directories:irep']);
 	
 }
