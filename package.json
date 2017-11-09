@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Whole Interactive",
+  "author": "Zach Charbel",
   "license": "Self",
   "devDependencies": {
     "grunt": "^0.4.1",

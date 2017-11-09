@@ -3,7 +3,7 @@ This is a base template for an iRep presentation that has a true global folder a
 
 Things that are done when the script is run are:
 
-- CSS and JS are minified
+- HTML, CSS and JS are minified
 - Images are optimized
 - Moving the "_global" folder from a global position to a local position within each slide
 - All slides in the production folder are compressed into a .zip for upload to salesforce
