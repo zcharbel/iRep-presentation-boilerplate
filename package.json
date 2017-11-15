@@ -1,7 +1,7 @@
 {
-  "name": "php-framework",
+  "name": "iRep-slide-compilation",
   "version": "0.0.1",
-  "description": "This is a basic PHP framework.",
+  "description": "This allows for global assets while developing slides for an iRep presentation.",
   "main": "index.js",
   "directories": {
     "doc": "doc"
@@ -18,12 +18,9 @@
     "grunt-contrib-cssmin": "^0.10.0",
     "grunt-contrib-imagemin": "^1.0.0",
     "grunt-contrib-rename": "^0.0.3",
-    "grunt-contrib-sass": "^0.8.1",
     "grunt-contrib-uglify": "^0.5.1",
-    "grunt-contrib-watch": "^0.6.1",
     "grunt-minify-html": "^3.0.0",
     "grunt-multi-dest": "^1.0.0",
-    "grunt-php2html": "^0.1.10",
     "grunt-text-replace": "0.4.0",
     "grunt-zip-directories": "1.0.1"
   }

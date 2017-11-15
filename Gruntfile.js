@@ -47,7 +47,7 @@ module.exports = function(grunt) {
 		clean: {
 			// cleans production folder before running actions
 			general: ['production/'],
-			// the delects the _global folder from the production folder 
+			// the deletes the _global folder from the production folder 
 			// once the _global folder is copied into local slides
 			global: ['production/_global/']
 		},
@@ -75,6 +75,8 @@ module.exports = function(grunt) {
 				tasks: [
 					"copy:globalFiles"
 				],
+				// in order for the '_global' folder to be copied into each slide
+				// you have to include each slide file path within the 'dest' array below
 				dest: [ "./production/slide_01/_global/"]
 			}
 		},
@@ -134,10 +136,8 @@ module.exports = function(grunt) {
 	});
 	
 	// loadNpmTasks bring in required grunt modules for use within this file
-	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
 	grunt.loadNpmTasks('grunt-contrib-rename');
 	grunt.loadNpmTasks('grunt-contrib-copy');
